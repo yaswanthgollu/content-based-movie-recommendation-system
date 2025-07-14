@@ -1,53 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Movie Recommender</title>
+    <meta charset="UTF-8">
+    <title>🎬 Movie Recommender</title>
     <style>
         body {
-            font-family: Arial;
-            margin: 40px auto;
-            max-width: 600px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 60px auto;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
             text-align: center;
+            position: relative;
         }
-        input[type=text] {
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
             padding: 10px;
-            width: 70%;
-        }
-        input[type=submit] {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
+            width: 65%;
+            font-size: 1rem;
             border: none;
+            border-radius: 6px;
+            margin-right: 10px;
         }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #00adb5;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #007e82;
+        }
+
         ul {
             list-style: none;
             padding: 0;
+            text-align: left;
         }
+
         li {
-            background: #f2f2f2;
-            margin: 5px;
-            padding: 10px;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 8px 0;
+            padding: 12px 18px;
+            border-left: 5px solid #00adb5;
+            border-radius: 6px;
+        }
+
+        .error {
+            color: #ff4d4d;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        #suggestions {
+            background: white;
+            color: black;
+            border-radius: 0 0 8px 8px;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: absolute;
+            width: 66%;
+            z-index: 999;
+        }
+
+        #suggestions div {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        #suggestions div:hover {
+            background-color: #eee;
         }
     </style>
 </head>
 <body>
-    <h1>Movie Recommendation System</h1>
-    <form method="POST">
-        <input type="text" name="movie" placeholder="Enter a movie name" required>
-        <input type="submit" value="Recommend">
-    </form>
-    {% if recommendations is not none %}
-        <h2>Recommendations for "{{ movie }}"</h2>
-        {% if recommendations %}
-            <ul>
-                {% for rec in recommendations %}
-                    <li>{{ rec }}</li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p style="color:red;">Movie not found!</p>
+    <div class="container">
+        <h1>🎥 Movie Recommendation System</h1>
+        <form method="POST" autocomplete="off">
+            <input type="text" id="movie-input" name="movie" placeholder="Enter a movie name..." required>
+            <input type="submit" value="Get Recommendations">
+            <div id="suggestions"></div>
+        </form>
+
+        {% if recommendations is not none %}
+            <h2>Top Picks for "<em>{{ movie }}</em>"</h2>
+            {% if recommendations %}
+                <ul>
+                    {% for rec in recommendations %}
+                        <li>{{ rec }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="error">😢 Sorry, movie not found!</p>
+            {% endif %}
         {% endif %}
-    {% endif %}
+    </div>
+
+    <script>
+        const input = document.getElementById("movie-input");
+        const suggestionsBox = document.getElementById("suggestions");
+
+        input.addEventListener("input", async () => {
+            const query = input.value.trim();
+            if (query.length === 0) {
+                suggestionsBox.innerHTML = "";
+                return;
+            }
+
+            const res = await fetch(`/suggest?q=${query}`);
+            const data = await res.json();
+
+            suggestionsBox.innerHTML = "";
+            data.forEach(title => {
+                const div = document.createElement("div");
+                div.textContent = title;
+                div.addEventListener("click", () => {
+                    input.value = title;
+                    suggestionsBox.innerHTML = "";
+                });
+                suggestionsBox.appendChild(div);
+            });
+        });
+    </script>
 </body>
 </html>
