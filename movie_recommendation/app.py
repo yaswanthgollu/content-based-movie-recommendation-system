@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, jsonify
 import pickle
 import numpy as np
 import difflib
+import os
 
 app = Flask(__name__)
 
@@ -47,5 +48,10 @@ def recommend(movie):
 
     return recommended_titles, matched_title
 
+
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(debug=False, host='0.0.0.0', port=port)
+
+
