@@ -1,12 +1,15 @@
 # Dataset files - too large for git
-movie_recommendation/dataset/
-movie_recommendation/.ipynb_checkpoints/
+dataset/
+*.csv
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
 
 # Python cache files
 __pycache__/
 *.py[cod]
 *$py.class
-*.so
 
 # Virtual environment
 venv/
@@ -27,14 +30,6 @@ ENV/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints
-
-# Large model files (if any)
-*.h5
-*.hdf5
-*.model
 
 # Log files
 *.log
